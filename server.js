@@ -62,7 +62,7 @@ function initializeAnswers() {
 
                 viewAllRoles();
 
-            } else if (initialQuestions.selection == "Add employee") {
+            } else if (initialQuestions.selection == "Add Employee") {
 
                 addEmployee();
 
@@ -110,7 +110,7 @@ FROM ROLES INNER JOIN department ON roles.department_id=department.id;`
 
 
 function viewAllEmployees() {
-   
+
 
     db.query(showEmployees, function (err, data) {
         console.table(data);
@@ -177,13 +177,13 @@ function addDepartment() {
 function addRole() {
 
     console.log('add department')
-var departmentList = [];
+    var departmentList = [];
     db.query('SELECT * FROM department;', function (err, data) {
         //     console.table(data);
 
         //     console.log(data[0].department_name);
         // using for loop to get the values on the department and make it as a list on the question
-        
+
 
         for (let i = 0; i < data.length; i++) {
             departmentList.push(data[i].department_name);
@@ -193,91 +193,144 @@ var departmentList = [];
 
     });
 
-        const newRole = [
+    const newRole = [
 
-            {
-                type: 'input',
-                message: 'Please provide new title',
-                name: 'title',
-            },
-            {
-                type: 'input',
-                message: 'Please provide salary',
-                name: 'salary',
-            },
-            {
-                type: 'list',
-                message: 'Please choose a department',
-                name: 'department',
-                choices: departmentList,
+        {
+            type: 'input',
+            message: 'Please provide new title',
+            name: 'title',
+        },
+        {
+            type: 'input',
+            message: 'Please provide salary',
+            name: 'salary',
+        },
+        {
+            type: 'list',
+            message: 'Please choose a department',
+            name: 'department',
+            choices: departmentList,
 
-            }
-        ]
+        }
+    ]
 
-        inquirer
-            .prompt(newRole)
+    inquirer
+        .prompt(newRole)
 
-            //generating data based on the answers/response
-            .then((response) => {
+        //generating data based on the answers/response
+        .then((response) => {
 
-                const roleID = departmentList.indexOf(response.department)+1;
-                console.log(roleId);
-                console.log(response.title);
-                console.log(response.salary);
+            const roleId = departmentList.indexOf(response.department) + 1;
 
-                const addRoleQuery = "INSERT INTO roles SET ?";
+            const addRoleQuery = "INSERT INTO roles SET ?";
 
-                db.query(addRoleQuery,
-                    {
-                        title: response.title,
-                        salary: response.salary,
-                        department_id: roleId,
-                    },
-                    function (err, data) {
+            db.query(addRoleQuery,
+                {
+                    title: response.title,
+                    salary: response.salary,
+                    department_id: roleId,
+                },
+                function (err, data) {
 
-                        initializeAnswers()
+                    initializeAnswers()
 
-                    });
-            })
-    }
+                });
+        })
+}
 
 
+function addEmployee() {
+
+    var roleList = [];
+    var managerList =[];
+
+    db.query('SELECT * FROM roles;', function (err, data) {
+        //     console.table(data);
+        for (let i = 0; i < data.length; i++) {
+            roleList.push(data[i].title);
+        }
+        //     console.log(data[0].department_name);
+        // using for loop to get the values on the department and make it as a list on the question
 
 
-//     db.query('SELECT * FROM department;', function (err, data) {
-// //     console.table(data);
 
-// //     console.log(data[0].department_name);
-//     // using for loop to get the values on the department and make it as a list on the questions
-//     var departmentList = [];
+        // Prompt function for question and answer
 
-//     for (let i = 0; i < data.length; i++) {
-//         departmentList.push(data[i].department_name);
-//     }
+    });
 
-//     console.log(departmentList);
+     console.log(roleList);
 
-//     const questions = [
+    db.query('SELECT * FROM manager;', function (err, data) {
+        //     console.table(data);
 
-//         {
-//             type: 'list',
-//             message: 'Please choose a license',
-//             name: 'license',
-//             choices: departmentList,
-//         }
-//     ]
+        //     console.log(data[0].department_name);
+        // using for loop to get the values on the department and make it as a list on the question
 
-//     // Prompt function for question and answer
-//     inquirer
-//         .prompt(questions)
+        for (let i = 0; i < data.length; i++) {
+            managerList.push(data[i].manager_name);
+        }
 
-//         //generating data based on the answers/response
-//         .then((response) => {
+        // Prompt function for question and answer
 
-//             console.log(response);
+    });
 
-//         })
-//  });
+ 
+
+    const newEmployee = [
+
+        {
+            type: 'input',
+            message: 'Please provide new employee first name',
+            name: 'first_name',
+        },
+        {
+            type: 'input',
+            message: 'Please provide new employee last name',
+            name: 'last_name',
+        },
+        {
+            type: 'list',
+            message: 'Please choose a manager',
+            name: 'manager',
+            choices: managerList,
+
+        },
+        {
+            type: 'list',
+            message: 'Please choose a title',
+            name: 'role',
+            choices: roleList,
+
+        },
+    ]
+
+    inquirer
+        .prompt(newEmployee)
+
+        //generating data based on the answers/response
+        .then((response) => {
+
+            const roleId = roleList.indexOf(response.role) + 1;
+            const managerId = managerList.indexOf(response.manager) + 1;
+
+            const addEmployeeQuery = "INSERT INTO employees SET ?";
+
+            db.query(addEmployeeQuery,
+                {
+                    first_name: response.first_name,
+                    last_name: response.last_name,
+                    manager_id: managerId,
+                    roles_id: roleId
+                },
+                function (err, data) {
+
+                    initializeAnswers()
+
+                });
+        })
+}
+
+
 
 
 initializeAnswers();
