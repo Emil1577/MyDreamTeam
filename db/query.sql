@@ -15,6 +15,36 @@ FROM department;
 +----+-----------------+
 
 
+
+<--adding roles__>
+INSERT INTO roles (title, salary, department_id=department.department_name) 
+VALUES ("vp", 100000)
+    
++----+------------------+--------+---------------+
+| id | title            | salary | department_id |
++----+------------------+--------+---------------+
+|  1 | sales            | 100000 |             1 |
+|  2 | customer service |  70000 |             4 |
+|  3 | engineer         | 150000 |             3 |
+|  4 | lawyer           | 210000 |             2 |
+|  5 | vp               | 100000 |          NULL |
++----+------------------+--------+---------------+
+
+SELECT * FROM roles INNER JOIN department ON roles.department_id=department.id
+
+INSERT INTO roles (roles_id)
+SELECT department_name FROM department
+WHERE roles_id=5;
+
+INSERT INTO roles (title, salary, , )  
+SELECT campaign_id, from_number, received_msg, date_received
+  FROM `received_txts`
+ WHERE `campaign_id` = '8'
+
+
+
+
+
 <<-USE THIS FOR ROLES LIST--->>
 SELECT roles.id AS ID, roles.title AS Title, roles.salary AS Salary, department.department_name AS Department
 FROM ROLES INNER JOIN department ON roles.department_id=department.id;
