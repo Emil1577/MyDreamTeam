@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "express": "^4.18.2",
+    "i": "^0.3.7",
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.1.0",
+    "npm": "^9.3.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "mydreamteam",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Emil1577/MyDreamTeam.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Emil1577/MyDreamTeam/issues"
+  },
+  "homepage": "https://github.com/Emil1577/MyDreamTeam#readme"
+}
