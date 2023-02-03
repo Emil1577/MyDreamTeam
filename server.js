@@ -160,13 +160,13 @@ const newDept = [
 
      var answerDept = response;
 
-    const addDeptQuery = `INSERT INTO department SET ?;`
+    const addDeptQuery = 'INSERT INTO department (department_name) VALUES ("' + answerDept+ ');'
 
     const deleteQuery = `DELETE FROM department
     Where id =7;`
 
 
-    db.query(addDeptQuery, {answerDept}, function (err, data) {
+    db.query(addDeptQuery, , function (err, data) {
 
         initializeAnswers()
     });
