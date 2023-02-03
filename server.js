@@ -66,6 +66,10 @@ function initializeAnswers() {
 
                 addEmployee();
 
+            } else if (initialQuestions.selection == "Update Employee") {
+
+                updateEmployee();
+
             } else if (initialQuestions.selection == "Add Department") {
 
                 addDepartment();
