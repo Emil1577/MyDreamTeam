@@ -74,13 +74,6 @@ function initializeAnswers() {
 
                 addRole();
 
-            } else if (initialQuestions.selection == "Update Employee") {
-
-                updateEmployee();
-
-            } else if (initialQuestions.selection == "Remove employee") {
-
-                deleteEmployee();
 
             } else if (initialQuestions.selection == "EXIT") {
 
@@ -416,7 +409,10 @@ function updateEmployee() {
         })
 }
 
+function exit() {
 
+    connection.end();
+}
 
 
 initializeAnswers();
