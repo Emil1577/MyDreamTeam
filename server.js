@@ -66,9 +66,9 @@ function initializeAnswers() {
 
             addEmployee();
             
-        }else if(initialQuestions.selection  == "Add department") {
+        }else if(initialQuestions.selection  == "Add Department") {
 
-            addDept();
+            addDepartment();
        
         }else if(initialQuestions.selection  == "Add role") {
 
@@ -93,11 +93,26 @@ function initializeAnswers() {
 
 };
 
+const showEmployees = `SELECT employees.id AS ID, 
+employees.first_name AS First_name, 
+employees.last_name AS Last_Name, 
+roles.title AS Title, 
+department.department_name AS Department, 
+roles.salary AS Salary,
+manager.manager_name AS Manager
+FROM employees INNER JOIN roles ON employees.roles_id=roles.id
+INNER JOIN department ON employees.roles_id=department.id
+INNER JOIN manager ON employees.manager_id=manager.id;`
+
+const showRoles = `SELECT roles.id AS ID, roles.title AS Title, roles.salary AS Salary, department.department_name AS Department
+FROM ROLES INNER JOIN department ON roles.department_id=department.id;`
+
+
 
 function viewAllEmployees(){
     console.log("triggered")
 
-    db.query('SELECT * FROM employees;', function (err, data) {
+    db.query(showEmployees, function (err, data) {
         console.table(data);
         initializeAnswers()
     });
@@ -106,21 +121,59 @@ function viewAllEmployees(){
 
 function viewAllRoles(){
 
-    db.query('SELECT * FROM roles;', function (err, data) {
+    db.query(showRoles, function (err, data) {
         console.table(data);
+        initializeAnswers()
     });
     
 }
 
 function viewAllDepartments(){
 
-    db.query('SELECT * FROM roles;', function (err, data) {
+    db.query('SELECT * FROM department;', function (err, data) {
         console.table(data);
+        initializeAnswers()
     });
     
 }
 
+function addDepartment () {
 
+    console.log('add department')
+const newDept = [
+
+        {
+            type: 'input',
+            message: 'Please provide new dapartment name',
+            name: 'name',
+
+        }
+    ]
+
+    inquirer
+        .prompt(newDept)
+
+        //generating data based on the answers/response
+        .then((response) => {
+
+            console.log(response);
+
+     var answerDept = response;
+
+    const addDeptQuery = `INSERT INTO department SET ?;`
+
+    const deleteQuery = `DELETE FROM department
+    Where id =7;`
+
+
+    db.query(addDeptQuery, {answerDept}, function (err, data) {
+
+        initializeAnswers()
+    });
+
+       })
+
+}
 // db.query('SELECT * FROM department;', function (err, data) {
 //     console.table(data);
 
