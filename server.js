@@ -22,7 +22,7 @@ const db = mysql.createConnection(
     },
     console.log(`Connected to the mydreamteam_db database.`)
 );
-
+//Initial questionaires
 const initialQuestions = [
 
     {
@@ -47,7 +47,7 @@ function initializeAnswers() {
     // prompt user actions using inquirer 
     inquirer.prompt(initialQuestions)
 
-        // await user responce from inquirer
+        // await user responce from inquirer then if function determines which function to execute
         .then(function (initialQuestions) {
 
             if (initialQuestions.selection == "View All Employees") {
@@ -78,14 +78,11 @@ function initializeAnswers() {
             } else if (initialQuestions.selection == "EXIT") {
 
                 exit();
-
             };
-
-
         });
-
 };
 
+// Constant to show employees using query
 const showEmployees = `SELECT employees.first_name, employees.last_name, roles.title, roles.salary, department.department_name, manager.manager_name
 FROM employees
 JOIN roles ON employees.roles_id = roles.id
@@ -97,52 +94,41 @@ const showRoles = `SELECT roles.id AS ID, roles.title AS Title, roles.salary AS 
 FROM ROLES INNER JOIN department ON roles.department_id=department.id;`
 
 
-
+// function to show employees
 function viewAllEmployees() {
-
-
     db.query(showEmployees, function (err, data) {
         console.table(data);
         initializeAnswers()
     });
-
 }
-
+// function to show roles
 function viewAllRoles() {
-
     db.query(showRoles, function (err, data) {
         console.table(data);
         initializeAnswers()
     });
-
 }
-
+// function to show departments
 function viewAllDepartments() {
-
     db.query('SELECT * FROM department;', function (err, data) {
         console.table(data);
         initializeAnswers()
     });
-
 }
-
+//Adding departments
 function addDepartment() {
 
-    console.log('add department')
     const newDept = [
-
         {
             type: 'input',
             message: 'Please provide new dapartment name',
             name: 'name',
-
         }
     ]
 
     inquirer
         .prompt(newDept)
 
-        //generating data based on the answers/response
         .then((response) => {
 
             console.log(response.name);
@@ -152,34 +138,24 @@ function addDepartment() {
             db.query(addDeptQuery,
                 {
                     department_name: response.name
-
                 },
 
                 function (err, data) {
-
                     initializeAnswers()
-
                 });
         })
 }
-
+//adding roles will require loop function for the dropdown menu
 function addRole() {
 
     console.log('add department')
     var departmentList = [];
     db.query('SELECT * FROM department;', function (err, data) {
-        //     console.table(data);
 
-        //     console.log(data[0].department_name);
         // using for loop to get the values on the department and make it as a list on the question
-
-
         for (let i = 0; i < data.length; i++) {
             departmentList.push(data[i].department_name);
         }
-
-        // Prompt function for question and answer
-
     });
 
     const newRole = [
@@ -199,13 +175,11 @@ function addRole() {
             message: 'Please choose a department',
             name: 'department',
             choices: departmentList,
-
         }
     ]
 
     inquirer
         .prompt(newRole)
-
         //generating data based on the answers/response
         .then((response) => {
 
@@ -227,43 +201,28 @@ function addRole() {
         })
 }
 
-
+//adding employees using loop to identify the id number
 function addEmployee() {
 
     var roleList = [];
-    var managerList =[];
+    var managerList = [];
 
     db.query('SELECT * FROM roles;', function (err, data) {
         //     console.table(data);
         for (let i = 0; i < data.length; i++) {
             roleList.push(data[i].title);
         }
-        //     console.log(data[0].department_name);
-        // using for loop to get the values on the department and make it as a list on the question
-
-
-
-        // Prompt function for question and answer
-
     });
 
-     console.log(roleList);
+    console.log(roleList);
 
     db.query('SELECT * FROM manager;', function (err, data) {
-        //     console.table(data);
-
-        //     console.log(data[0].department_name);
-        // using for loop to get the values on the department and make it as a list on the question
 
         for (let i = 0; i < data.length; i++) {
             managerList.push(data[i].manager_name);
         }
 
-        // Prompt function for question and answer
-
     });
-
- 
 
     const newEmployee = [
 
@@ -295,7 +254,6 @@ function addEmployee() {
 
     inquirer
         .prompt(newEmployee)
-
         //generating data based on the answers/response
         .then((response) => {
 
@@ -324,7 +282,7 @@ function addEmployee() {
 function updateEmployee() {
 
     var updateRoleList = [];
-    var empList =[];
+    var empList = [];
 
     db.query('SELECT * FROM roles;', function (err, data) {
         //     console.table(data);
@@ -338,10 +296,6 @@ function updateEmployee() {
 
 
     db.query('SELECT * FROM employees;', function (err, data) {
-        //     console.table(data);
-
-        //     console.log(data[0].department_name);
-        // using for loop to get the values on the department and make it as a list on the question
 
         for (let i = 0; i < data.length; i++) {
             empList.push(data[i].first_name);
@@ -355,7 +309,7 @@ function updateEmployee() {
 
 
     const updateEmployee = [
- 
+
         {
             type: 'input',
             message: 'Please provide reason',
@@ -367,23 +321,18 @@ function updateEmployee() {
             message: 'Which employee you want to update?',
             name: 'employee',
             choices: empList,
-
         },
         {
             type: 'list',
             message: 'Please choose a title',
             name: 'role',
             choices: updateRoleList
-
         },
     ]
 
     inquirer
         .prompt(updateEmployee)
 
-        
-
-        //generating data based on the answers/response
         .then((response) => {
 
             const roles_Id = updateRoleList.indexOf(response.role) + 1;
@@ -394,9 +343,9 @@ function updateEmployee() {
             console.log(addEmployeeQuery)
             db.query(addEmployeeQuery,
                 // {
-       
+
                 //     roles_id: roles_Id
-                   
+
                 // },
                 function (err, data) {
 
@@ -404,8 +353,8 @@ function updateEmployee() {
 
                 });
 
-                 console.log(roles_Id)
-                 console.log(first_name)
+            console.log(roles_Id)
+            console.log(first_name)
         })
 }
 
@@ -413,7 +362,6 @@ function exit() {
 
     connection.end();
 }
-
 
 initializeAnswers();
 
