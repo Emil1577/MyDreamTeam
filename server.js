@@ -218,7 +218,7 @@ function addEmployee() {
         }
     });
 
-    console.log(roleList);
+    //console.log(roleList);
 
     db.query('SELECT * FROM manager;', function (err, data) {
 
@@ -293,7 +293,7 @@ function updateEmployee() {
         for (let i = 0; i < data.length; i++) {
             updateRoleList.push(data[i].title);
         }
-        console.log(updateRoleList);
+        //console.log(updateRoleList);
         // using for loop to get the values on the department and make it as a list on the question
 
     });
