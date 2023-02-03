@@ -74,7 +74,7 @@ function initializeAnswers() {
 
                 addRole();
 
-            } else if (initialQuestions.selection == "Edit employee") {
+            } else if (initialQuestions.selection == "Update Employee") {
 
                 updateEmployee();
 
@@ -93,16 +93,12 @@ function initializeAnswers() {
 
 };
 
-const showEmployees = `SELECT employees.id AS ID, 
-employees.first_name AS First_name, 
-employees.last_name AS Last_Name, 
-roles.title AS Title, 
-department.department_name AS Department, 
-roles.salary AS Salary,
-manager.manager_name AS Manager
-FROM employees INNER JOIN roles ON employees.roles_id=roles.id
-INNER JOIN department ON employees.roles_id=department.id
-INNER JOIN manager ON employees.manager_id=manager.id;`
+const showEmployees = `SELECT employees.first_name, employees.last_name, roles.title, roles.salary, department.department_name, manager.manager_name
+FROM employees
+JOIN roles ON employees.roles_id = roles.id
+JOIN department ON roles.department_id = department.id
+JOIN manager ON employees.manager_id=manager.id
+ORDER BY employees.id;`
 
 const showRoles = `SELECT roles.id AS ID, roles.title AS Title, roles.salary AS Salary, department.department_name AS Department
 FROM ROLES INNER JOIN department ON roles.department_id=department.id;`
@@ -327,6 +323,96 @@ function addEmployee() {
                     initializeAnswers()
 
                 });
+        })
+}
+
+
+
+function updateEmployee() {
+
+    var updateRoleList = [];
+    var empList =[];
+
+    db.query('SELECT * FROM roles;', function (err, data) {
+        //     console.table(data);
+        for (let i = 0; i < data.length; i++) {
+            updateRoleList.push(data[i].title);
+        }
+        console.log(updateRoleList);
+        // using for loop to get the values on the department and make it as a list on the question
+
+    });
+
+
+    db.query('SELECT * FROM employees;', function (err, data) {
+        //     console.table(data);
+
+        //     console.log(data[0].department_name);
+        // using for loop to get the values on the department and make it as a list on the question
+
+        for (let i = 0; i < data.length; i++) {
+            empList.push(data[i].first_name);
+
+        }
+        console.log(empList);
+        // Prompt function for question and answer
+
+    });
+
+
+
+    const updateEmployee = [
+ 
+        {
+            type: 'input',
+            message: 'Please provide reason',
+            name: 'reason',
+        },
+
+        {
+            type: 'list',
+            message: 'Which employee you want to update?',
+            name: 'employee',
+            choices: empList,
+
+        },
+        {
+            type: 'list',
+            message: 'Please choose a title',
+            name: 'role',
+            choices: updateRoleList
+
+        },
+    ]
+
+    inquirer
+        .prompt(updateEmployee)
+
+        
+
+        //generating data based on the answers/response
+        .then((response) => {
+
+            const roles_Id = updateRoleList.indexOf(response.role) + 1;
+            const first_name = response.employee
+
+            const addEmployeeQuery = `UPDATE employees SET roles_id = ${roles_Id} where first_name = "${first_name}";`
+
+            console.log(addEmployeeQuery)
+            db.query(addEmployeeQuery,
+                // {
+       
+                //     roles_id: roles_Id
+                   
+                // },
+                function (err, data) {
+
+                    initializeAnswers()
+
+                });
+
+                 console.log(roles_Id)
+                 console.log(first_name)
         })
 }
 
