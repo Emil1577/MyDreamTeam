@@ -28,7 +28,7 @@ const initialQuestions = [
     {
         name: 'selection',
         type: 'list',
-        message: 'Please choose a license',
+        message: 'Please choose an action',
         choices: [
             "View All Employees",
             "Add Employee",
@@ -43,53 +43,53 @@ const initialQuestions = [
 ]
 
 function initializeAnswers() {
-   
+
     // prompt user actions using inquirer 
     inquirer.prompt(initialQuestions)
-    
-    // await user responce from inquirer
-    .then(function(initialQuestions) {
 
-        if(initialQuestions.selection == "View All Employees") {         
+        // await user responce from inquirer
+        .then(function (initialQuestions) {
 
-            viewAllEmployees();
-        
-        }else if(initialQuestions.selection  == "View All Departments") {
+            if (initialQuestions.selection == "View All Employees") {
 
-            viewAllDepartments();
+                viewAllEmployees();
 
-        }else if(initialQuestions.selection  == "View All Roles") {
+            } else if (initialQuestions.selection == "View All Departments") {
 
-            viewAllRoles();
+                viewAllDepartments();
 
-        }else if(initialQuestions.selection  == "Add employee") {
+            } else if (initialQuestions.selection == "View All Roles") {
 
-            addEmployee();
-            
-        }else if(initialQuestions.selection  == "Add Department") {
+                viewAllRoles();
 
-            addDepartment();
-       
-        }else if(initialQuestions.selection  == "Add role") {
+            } else if (initialQuestions.selection == "Add employee") {
 
-            addRole();
+                addEmployee();
 
-        }else if(initialQuestions.selection  == "Edit employee") {
+            } else if (initialQuestions.selection == "Add Department") {
 
-            updateEmployee();
+                addDepartment();
 
-        }else if(initialQuestions.selection  == "Remove employee") {
+            } else if (initialQuestions.selection == "Add Role") {
 
-            deleteEmployee();
+                addRole();
 
-        }else if(initialQuestions.selection  == "EXIT") {
+            } else if (initialQuestions.selection == "Edit employee") {
 
-            exit();
+                updateEmployee();
 
-        };
-        
+            } else if (initialQuestions.selection == "Remove employee") {
 
-    });    
+                deleteEmployee();
+
+            } else if (initialQuestions.selection == "EXIT") {
+
+                exit();
+
+            };
+
+
+        });
 
 };
 
@@ -109,38 +109,38 @@ FROM ROLES INNER JOIN department ON roles.department_id=department.id;`
 
 
 
-function viewAllEmployees(){
-    console.log("triggered")
+function viewAllEmployees() {
+   
 
     db.query(showEmployees, function (err, data) {
         console.table(data);
         initializeAnswers()
     });
-    
+
 }
 
-function viewAllRoles(){
+function viewAllRoles() {
 
     db.query(showRoles, function (err, data) {
         console.table(data);
         initializeAnswers()
     });
-    
+
 }
 
-function viewAllDepartments(){
+function viewAllDepartments() {
 
     db.query('SELECT * FROM department;', function (err, data) {
         console.table(data);
         initializeAnswers()
     });
-    
+
 }
 
-function addDepartment () {
+function addDepartment() {
 
     console.log('add department')
-const newDept = [
+    const newDept = [
 
         {
             type: 'input',
@@ -156,28 +156,98 @@ const newDept = [
         //generating data based on the answers/response
         .then((response) => {
 
-            console.log(response);
+            console.log(response.name);
 
-     var answerDept = response;
+            const addDeptQuery = "INSERT INTO department SET ?"
 
-    const addDeptQuery = 'INSERT INTO department (department_name) VALUES ("' + answerDept+ ');'
+            db.query(addDeptQuery,
+                {
+                    department_name: response.name
 
-    const deleteQuery = `DELETE FROM department
-    Where id =7;`
+                },
 
+                function (err, data) {
 
-    db.query(addDeptQuery, , function (err, data) {
+                    initializeAnswers()
 
-        initializeAnswers()
+                });
+        })
+}
+
+function addRole() {
+
+    console.log('add department')
+var departmentList = [];
+    db.query('SELECT * FROM department;', function (err, data) {
+        //     console.table(data);
+
+        //     console.log(data[0].department_name);
+        // using for loop to get the values on the department and make it as a list on the question
+        
+
+        for (let i = 0; i < data.length; i++) {
+            departmentList.push(data[i].department_name);
+        }
+
+        // Prompt function for question and answer
+
     });
 
-       })
+        const newRole = [
 
-}
-// db.query('SELECT * FROM department;', function (err, data) {
-//     console.table(data);
+            {
+                type: 'input',
+                message: 'Please provide new title',
+                name: 'title',
+            },
+            {
+                type: 'input',
+                message: 'Please provide salary',
+                name: 'salary',
+            },
+            {
+                type: 'list',
+                message: 'Please choose a department',
+                name: 'department',
+                choices: departmentList,
 
-//     console.log(data[0].department_name);
+            }
+        ]
+
+        inquirer
+            .prompt(newRole)
+
+            //generating data based on the answers/response
+            .then((response) => {
+
+                const roleID = departmentList.indexOf(response.department)+1;
+                console.log(roleId);
+                console.log(response.title);
+                console.log(response.salary);
+
+                const addRoleQuery = "INSERT INTO roles SET ?";
+
+                db.query(addRoleQuery,
+                    {
+                        title: response.title,
+                        salary: response.salary,
+                        department_id: roleId,
+                    },
+                    function (err, data) {
+
+                        initializeAnswers()
+
+                    });
+            })
+    }
+
+
+
+
+//     db.query('SELECT * FROM department;', function (err, data) {
+// //     console.table(data);
+
+// //     console.log(data[0].department_name);
 //     // using for loop to get the values on the department and make it as a list on the questions
 //     var departmentList = [];
 
@@ -207,8 +277,7 @@ const newDept = [
 //             console.log(response);
 
 //         })
-
-// });
+//  });
 
 
 initializeAnswers();
